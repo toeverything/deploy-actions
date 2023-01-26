@@ -20,7 +20,7 @@ jobs:
               uses: actions/checkout@v2
 
             - name: Deploy to AFFiNE internal
-              uses: toeverything/deploy-actions@latest
+              uses: toeverything/deploy-actions@v1
               with:
                   tailscale_key: ${{ secrets.AFFINE_TAILSCALE_KEY }}
                   nomad_addr: ${{ secrets.AFFINE_NOMAD_ADDR }}
