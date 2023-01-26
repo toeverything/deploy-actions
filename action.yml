@@ -25,7 +25,14 @@ inputs:
 runs:
     using: 'composite'
     steps:
+        - name: Check network
+          id: check_network
+          shell: bash
+          run: curl -s --connect-timeout 1 -m 2 ${{ inputs.nomad_addr }} > /dev/null || exit 1
+          continue-on-error: true
+
         - name: Tailscale
+          if: steps.check_network.outcome != 'success'
           uses: tailscale/github-action@ce41a99162202a647a4b24c30c558a567b926709
           with:
               authkey: ${{ inputs.tailscale_key }}
