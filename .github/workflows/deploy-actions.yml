@@ -13,14 +13,14 @@ concurrency:
 
 jobs:
     deploy:
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-20.04
         environment: development
         steps:
             - name: Checkout
               uses: actions/checkout@v2
 
             - name: Deploy to AFFiNE internal
-              uses: toeverything/deploy-actions@v1
+              uses: toeverything/deploy-actions@master
               with:
                   tailscale_key: ${{ secrets.AFFINE_TAILSCALE_KEY }}
                   nomad_addr: ${{ secrets.AFFINE_NOMAD_ADDR }}

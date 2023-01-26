@@ -26,9 +26,10 @@ runs:
     using: 'composite'
     steps:
         - name: Tailscale
-          uses: tailscale/github-action@v1
+          uses: tailscale/github-action@ce41a99162202a647a4b24c30c558a567b926709
           with:
               authkey: ${{ inputs.tailscale_key }}
+              version: 1.36.0
 
         - name: Setup `nomad-pack`
           uses: hashicorp/setup-nomad-pack@ea80f2bfbcb2f318e65207177a589f457933efc5
