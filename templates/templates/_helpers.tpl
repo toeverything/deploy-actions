@@ -112,6 +112,7 @@ job "affine-[[ .name ]]" {
   [[ template "region" . ]]
   datacenters = [[ .datacenters | toJson ]]
   type        = "service"
+  namespace   = [[ .namespace | quote ]]
       
   update {
     stagger      = "30s"

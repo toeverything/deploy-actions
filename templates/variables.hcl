@@ -12,7 +12,13 @@ variable "region" {
 variable "datacenters" {
   description = "A list of datacenters in the region which are eligible for task placement"
   type        = list(string)
-  default     = ["scholar"]
+  default     = ["gcp"]
+}
+
+variable "namespace" {
+  description = "The namespace to use as the job name which overrides using the pack name"
+  type        = string
+  default     = "development"
 }
 
 variable "services" {

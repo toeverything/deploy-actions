@@ -1,5 +1,4 @@
 name        = "alpha"
-datacenters = ["gcp"]
 services = [
   {
     name  = "abbey-wood",
