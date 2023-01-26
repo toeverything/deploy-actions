@@ -50,7 +50,7 @@ network {
 service {
   [[- range $idx, $service := . ]]
   [[- range $idx, $port := .ports ]]
-      tags = ["urlprefix-[[ $service.name ]].affine.live/"]
+      tags = [[- if not $port.domain -]]["urlprefix-[[ $service.name ]].affine.live/"][[- else -]]["urlprefix-[[ $port.domain ]]/"][[- end ]]
       port = "affine-[[ $service.name ]]-[[ $port.name ]]"
       check {
         name     = "AFFiNE [[ $service.name ]] Check"

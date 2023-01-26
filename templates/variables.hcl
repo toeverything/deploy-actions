@@ -21,7 +21,7 @@ variable "services" {
     name           = string
     image          = string
     tag            = string
-    port           = list(object({ name = string, to = number }))
+    port           = list(object({ name = string, to = number, domain = string }))
     envs           = list(object({ key = string, value = string }))
     check_type     = string
     check_path     = string
