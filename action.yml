@@ -1,0 +1,45 @@
+name: 'Deploy to AFFiNE Internal'
+description: 'Deploy container to affine internal network'
+branding:
+    icon: 'arrow-right-circle'
+    color: 'gray-dark'
+inputs:
+    tailscale_key:
+        description: 'Your Tailscale authentication key, from the admin panel.'
+        required: true
+    nomad_addr:
+        description: 'Nomad address.'
+        required: true
+    nomad_token:
+        description: 'Nomad token.'
+        required: true
+    consul_addr:
+        description: 'Consul address.'
+        required: true
+    consul_token:
+        description: 'Consul token.'
+        required: true
+    config_file:
+        description: 'The path to Nomad Pack config file.'
+        required: true
+runs:
+    using: 'composite'
+    steps:
+        - name: Tailscale
+          uses: tailscale/github-action@v1
+          with:
+              authkey: ${{ inputs.tailscale_key }}
+
+        - name: Setup `nomad-pack`
+          uses: hashicorp/setup-nomad-pack@ea80f2bfbcb2f318e65207177a589f457933efc5
+          with:
+              version: '0.0.1-techpreview2'
+
+        - name: Deploy to AFFiNE Internal
+          shell: bash
+          run: nomad-pack run templates -f ${{ inputs.config_file }}
+          env:
+              NOMAD_ADDR: ${{ inputs.nomad_addr }}
+              NOMAD_TOKEN: ${{ inputs.nomad_token }}
+              CONSUL_ADDR: ${{ inputs.consul_addr }}
+              CONSUL_HTTP_TOKEN: ${{ inputs.consul_token }}
