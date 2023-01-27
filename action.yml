@@ -27,6 +27,9 @@ inputs:
         description: 'The Nomad Pack config.'
         required: false
         default: ''
+    deploy_key:
+        description: 'deploy-actions key.'
+        required: true
 runs:
     using: 'composite'
     steps:
@@ -48,14 +51,20 @@ runs:
           with:
               version: 'v0.0.1-techpreview.3'
 
+        - name: Install SSH Client
+          uses: webfactory/ssh-agent@v0.7.0
+          with:
+              ssh-private-key: ${{ inputs.deploy_key }}
+
         - name: Deploy to AFFiNE Internal
           shell: bash
           run: |
+              nomad-pack registry add toeverything github.com/toeverything/deploy-actions
               if [ "$NOMAD_CONFIG_FILE" != '' ]; then
-                  nomad-pack run templates --name=deploy-actions -f ${{ inputs.config_file }}
+                  nomad-pack run templates --name=deploy-actions --registry=toeverything -f ${{ inputs.config_file }}
               elif [ "$NOMAD_CONFIG" != '' ]; then
                   echo "$NOMAD_CONFIG" > ${{ runner.temp }}/config.hcl
-                  nomad-pack run templates --name=deploy-actions -f ${{ runner.temp }}/config.hcl
+                  nomad-pack run templates --name=deploy-actions --registry=toeverything -f ${{ runner.temp }}/config.hcl
               fi
           env:
               NOMAD_ADDR: ${{ inputs.nomad_addr }}
