@@ -49,8 +49,8 @@ network {
 
 [[ define "services" -]]
 [[- range $idx, $service := . ]]
-    service {
     [[- range $idx, $port := .ports ]]
+    service {
         tags = [[- if not $port.domain -]]["urlprefix-[[ $service.name ]].affine.live/"][[- else -]]["urlprefix-[[ $port.domain ]]/"][[- end ]]
         port = "affine-[[ $service.name ]]-[[ $port.name ]]"
         check {
@@ -60,9 +60,8 @@ network {
           interval = [[- if not $service.check_interval -]]"10s"[[- else -]][[ $service.check_interval | quote ]][[- end ]]
           timeout  = [[- if not $service.check_timeout -]]"2s"[[- else -]][[ $service.check_timeout | quote ]][[- end ]]
         }
-    
-    [[- end ]]
     }
+    [[- end ]]
 [[- end ]]
 [[- end -]]
 
