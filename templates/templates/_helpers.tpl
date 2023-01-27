@@ -39,6 +39,7 @@ network {
   [[- range $idx, $port := .ports ]]
       port "affine-[[ $service.name ]]-[[ $port.name ]]" {
         to           = [[ $port.to ]]
+        host_network = "tailscale"
       }
   [[- end ]]
   [[- end ]]
