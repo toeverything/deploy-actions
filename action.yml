@@ -21,7 +21,12 @@ inputs:
         required: true
     config_file:
         description: 'The path to Nomad Pack config file.'
-        required: true
+        required: false
+        default: ''
+    config:
+        description: 'The Nomad Pack config.'
+        required: false
+        default: ''
 runs:
     using: 'composite'
     steps:
@@ -31,7 +36,7 @@ runs:
           run: curl -s --connect-timeout 1 -m 2 ${{ inputs.nomad_addr }} > /dev/null || exit 1
           continue-on-error: true
 
-        - name: Tailscale
+        - name: Connect to Tailscale
           if: steps.check_network.outcome != 'success'
           uses: tailscale/github-action@ce41a99162202a647a4b24c30c558a567b926709
           with:
@@ -41,13 +46,21 @@ runs:
         - name: Setup `nomad-pack`
           uses: hashicorp/setup-nomad-pack@ea80f2bfbcb2f318e65207177a589f457933efc5
           with:
-              version: '0.0.1-techpreview2'
+              version: 'v0.0.1-techpreview.3'
 
         - name: Deploy to AFFiNE Internal
           shell: bash
-          run: nomad-pack run templates -f ${{ inputs.config_file }}
+          run: |
+              if [ "$NOMAD_CONFIG_FILE" != '' ]; then
+                  nomad-pack run templates --name=deploy-actions -f ${{ inputs.config_file }}
+              elif [ "$NOMAD_CONFIG" != '' ]; then
+                  echo "$NOMAD_CONFIG" > ${{ runner.temp }}/config.hcl
+                  nomad-pack run templates --name=deploy-actions -f ${{ runner.temp }}/config.hcl
+              fi
           env:
               NOMAD_ADDR: ${{ inputs.nomad_addr }}
               NOMAD_TOKEN: ${{ inputs.nomad_token }}
               CONSUL_ADDR: ${{ inputs.consul_addr }}
               CONSUL_HTTP_TOKEN: ${{ inputs.consul_token }}
+              NOMAD_CONFIG_FILE: ${{ inputs.config_file }}
+              NOMAD_CONFIG: ${{ inputs.config }}

@@ -27,4 +27,13 @@ jobs:
                   nomad_token: ${{ secrets.AFFINE_NOMAD_TOKEN }}
                   consul_addr: ${{ secrets.AFFINE_CONSUL_ADDR }}
                   consul_token: ${{ secrets.AFFINE_CONSUL_TOKEN }}
-                  config_file: ./affine.hcl
+                  config: |
+                      name = "alpha"
+                      services = [
+                          {
+                              name  = "abbey-wood",
+                              image = "ghcr.io/toeverything/affine-self-hosted",
+                              tag   = "alpha-abbey-wood",
+                              ports = [{ name = "abbey-wood", to = "3000" }],
+                          }
+                      ]

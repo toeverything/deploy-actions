@@ -1,4 +1,4 @@
-name        = "alpha"
+name = "alpha"
 services = [
   {
     name  = "abbey-wood",
