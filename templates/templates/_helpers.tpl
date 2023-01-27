@@ -48,22 +48,22 @@ network {
 
 
 [[ define "services" -]]
-service {
-  [[- range $idx, $service := . ]]
-  [[- range $idx, $port := .ports ]]
-      tags = [[- if not $port.domain -]]["urlprefix-[[ $service.name ]].affine.live/"][[- else -]]["urlprefix-[[ $port.domain ]]/"][[- end ]]
-      port = "affine-[[ $service.name ]]-[[ $port.name ]]"
-      check {
-        name     = "AFFiNE [[ $service.name ]] Check"
-        type     = [[- if not $service.check_type -]]"http"[[- else -]][[ $service.check_type | quote ]][[- end ]]
-        path     = [[- if not $service.check_path -]]"/"[[- else -]][[ $service.check_path | quote ]][[- end ]]
-        interval = [[- if not $service.check_interval -]]"10s"[[- else -]][[ $service.check_interval | quote ]][[- end ]]
-        timeout  = [[- if not $service.check_timeout -]]"2s"[[- else -]][[ $service.check_timeout | quote ]][[- end ]]
-      }
-  
-  [[- end ]]
-  [[- end ]]
+[[- range $idx, $service := . ]]
+    service {
+    [[- range $idx, $port := .ports ]]
+        tags = [[- if not $port.domain -]]["urlprefix-[[ $service.name ]].affine.live/"][[- else -]]["urlprefix-[[ $port.domain ]]/"][[- end ]]
+        port = "affine-[[ $service.name ]]-[[ $port.name ]]"
+        check {
+          name     = "AFFiNE [[ $service.name ]] Check"
+          type     = [[- if not $service.check_type -]]"http"[[- else -]][[ $service.check_type | quote ]][[- end ]]
+          path     = [[- if not $service.check_path -]]"/"[[- else -]][[ $service.check_path | quote ]][[- end ]]
+          interval = [[- if not $service.check_interval -]]"10s"[[- else -]][[ $service.check_interval | quote ]][[- end ]]
+          timeout  = [[- if not $service.check_timeout -]]"2s"[[- else -]][[ $service.check_timeout | quote ]][[- end ]]
+        }
+    
+    [[- end ]]
     }
+[[- end ]]
 [[- end -]]
 
 // Generic "service" block template
