@@ -68,14 +68,14 @@ network {
 // Generic "service" block template
 [[ define "groups" -]]
   [[- if . ]]
-    [[ template "network" . ]]
-    [[ template "services" . ]]
-    [[- range $idx, $service := . ]]
+    [[ template "network" .services ]]
+    [[ template "services" .services ]]
+    [[- range $idx, $service := .services ]]
     task "affine-[[ $service.name ]]" {
       driver = "docker"
 
       config {
-        image      = "[[ $service.image ]]:[[ $service.tag ]]"
+        image      = "[[ $service.image ]]:[[- if not $service.tagSource -]][[ $service.tag ]][[- else -]]${DOCKER_TAG}[[- end ]]"
         force_pull = true
         ports      = [
           [[- range $idx, $port := .ports ]]
@@ -83,6 +83,16 @@ network {
           [[- end ]]
         ]
       }
+      [[- if $service.tagSource ]]
+      template {
+        data = <<EOH
+DOCKER_TAG="{{ key "service/[[ $.namespace ]]/[[ $service.tagSource ]]" }}"
+EOH
+
+        destination = "secrets/.env"
+        env         = true
+      }
+      [[- end ]]
       [[- if $service.envs ]]
       env {
         [[- range $idx, $var := $service.envs ]]
@@ -121,7 +131,7 @@ job "affine-[[ .name ]]" {
       
   group "[[ .name ]]" {
     count = 1
-    [[ template "groups" .services ]]
+    [[ template "groups" . ]]
   }
 }
 [[- end -]]
